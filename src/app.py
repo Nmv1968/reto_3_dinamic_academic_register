@@ -27,7 +27,7 @@ def validar_input(mensaje):
         texto = input(mensaje)
         if texto.strip() != "":
             return texto.strip()
-        print("Entrada no valida. Ingrese un valor no vacio. ⛔")
+        print("Entrada no válida. Ingrese un valor no vacío. ⛔")
 
 
 def validar_opcion(mensaje, opciones_validas):
@@ -35,7 +35,7 @@ def validar_opcion(mensaje, opciones_validas):
         opcion = validar_input(mensaje)
         if opcion in opciones_validas:
             return opcion
-        print("Opcion no valida. Intente nuevamente. ⛔")
+        print("Opción no válida. Intente nuevamente. ⛔")
 
 
 def pedir_entero(mensaje, minimo=None, maximo=None):
@@ -44,14 +44,14 @@ def pedir_entero(mensaje, minimo=None, maximo=None):
         try:
             numero = int(texto)
             if minimo is not None and numero < minimo:
-                print("El numero ingresado es demasiado pequeno. ⛔")
+                print("El número ingresado es demasiado pequeño. ⛔")
                 continue
             if maximo is not None and numero > maximo:
-                print("El numero ingresado es demasiado grande. ⛔")
+                print("El número ingresado es demasiado grande. ⛔")
                 continue
             return numero
         except ValueError:
-            print("Ingrese un numero entero valido. ⛔")
+            print("Ingrese un número entero válido. ⛔")
 
 
 def pedir_flotante(mensaje, minimo=None, maximo=None):
@@ -60,14 +60,26 @@ def pedir_flotante(mensaje, minimo=None, maximo=None):
         try:
             numero = float(texto)
             if minimo is not None and numero < minimo:
-                print("El numero ingresado es demasiado pequeno. ⛔")
+                print("El número ingresado es demasiado pequeño. ⛔")
                 continue
             if maximo is not None and numero > maximo:
-                print("El numero ingresado es demasiado grande. ⛔")
+                print("El número ingresado es demasiado grande. ⛔")
                 continue
             return numero
         except ValueError:
-            print("Ingrese un numero valido. ⛔")
+            print("Ingrese un número válido. ⛔")
+
+
+def validar_ci(mensaje):
+    while True:
+        ci_estudiante = validar_input(mensaje)
+        if not ci_estudiante.isdigit():
+            print("La cédula solo debe contener dígitos. ⛔")
+            continue
+        if len(ci_estudiante) != 10:
+            print("La cédula debe tener exactamente 10 dígitos. ⛔")
+            continue
+        return ci_estudiante
 
 
 def validar_correo(mensaje):
@@ -77,14 +89,14 @@ def validar_correo(mensaje):
             print("El correo no puede tener espacios. ⛔")
             continue
         if "@" not in correo:
-            print("El correo debe tener el simbolo @. ⛔")
+            print("El correo debe tener el símbolo @. ⛔")
             continue
         partes = correo.split("@")
         if len(partes) != 2 or partes[0] == "" or partes[1] == "":
-            print("El correo no tiene un formato valido. ⛔")
+            print("El correo no tiene un formato válido. ⛔")
             continue
         if "." not in partes[1]:
-            print("El dominio del correo no es valido. ⛔")
+            print("El dominio del correo no es válido. ⛔")
             continue
         return correo
 
@@ -108,6 +120,8 @@ def mostrar_inscritos(inscritos):
         print(
             "ID:",
             inscrito.id_estudiante,
+            "| CI:",
+            inscrito.ci_estudiante,
             "| Nombre:",
             inscrito.nombres,
             "| Correo:",
@@ -126,7 +140,7 @@ def mostrar_historial(historial, hacia_atras=False):
         return
 
     for semestre in datos:
-        print("Anio:", semestre["anio"], "| Termino:", semestre["term"])
+        print("Año:", semestre["anio"], "| Término:", semestre["term"])
         materias = semestre.get("materias", [])
         if len(materias) == 0:
             print("  Sin materias registradas")
@@ -159,15 +173,15 @@ def mostrar_grupos(grupos):
 
 
 def pedir_semestre():
-    anio = pedir_entero("Ingrese el anio: ", 2000, 2100)
-    term = pedir_entero("Ingrese el termino: ", 1, 2)
-    cantidad = pedir_entero("Cuantas materias desea agregar: ", 1)
+    anio = pedir_entero("Ingrese el año: ", 2000, 2100)
+    term = pedir_entero("Ingrese el término: ", 1, 2)
+    cantidad = pedir_entero("¿Cuántas materias desea agregar?: ", 1)
     materias = []
 
     contador = 0
     while contador < cantidad:
         print("Materia", contador + 1)
-        cod = validar_input("Codigo: ")
+        cod = validar_input("Código: ")
         nombre = validar_input("Nombre: ")
         nota = pedir_flotante("Nota: ", 0, 5)
         materias.append({"cod": cod, "nombre": nombre, "nota": nota})
@@ -224,9 +238,9 @@ def reporte_top_3(historial):
         item = datos[indice]
         print(
             indice + 1,
-            ". Anio:",
+            ". Año:",
             item["anio"],
-            "Termino:",
+            "Término:",
             item["term"],
             "Promedio:",
             round(item["promedio"], 2),
@@ -257,12 +271,13 @@ def reporte_cantidad_inscritos(inscritos):
 def crear_estudiante():
     nombres = validar_input("Ingrese los nombres del estudiante: ")
     correo = validar_correo("Ingrese el correo del estudiante: ")
-    return Estudiante(nombres, correo)
+    ci_estudiante = validar_ci("Ingrese la cédula del estudiante: ")
+    return Estudiante(nombres, correo, ci_estudiante)
 
 
 def menu_inscritos(inscritos):
     while True:
-        mostrar_titulo("=== 👥 Modulo Inscritos 👥 ===")
+        mostrar_titulo("=== 👥 Módulo Inscritos 👥 ===")
         print("1. Agregar estudiante ➕")
         print("2. Eliminar estudiante 🗑️")
         print("3. Buscar estudiante 🔎")
@@ -270,22 +285,25 @@ def menu_inscritos(inscritos):
         print("5. Exportar CSV 💾")
         print("6. Importar CSV 📥")
         print("0. Volver ↩️")
-        opcion = validar_opcion("Seleccione una opcion: ", ["1", "2", "3", "4", "5", "6", "0"])
+        opcion = validar_opcion("Seleccione una opción: ", ["1", "2", "3", "4", "5", "6", "0"])
 
         if opcion == "1":
             estudiante = crear_estudiante()
             inscritos.insertar_final(estudiante)
-            print(f"✅ Estudiante agregado con ID automatico: {estudiante.id_estudiante}")
+            print(
+                f"✅ Estudiante agregado con ID: {estudiante.id_estudiante} "
+                f"y CI: {estudiante.ci_estudiante}"
+            )
         elif opcion == "2":
             eliminado = inscritos.eliminar(validar_input("ID a eliminar: "))
             if eliminado is None:
-                print("No se encontro el inscrito. ⛔")
+                print("No se encontró el inscrito. ⛔")
             else:
                 print("✅ Inscrito eliminado:", eliminado.nombres)
         elif opcion == "3":
             encontrado = inscritos.buscar(validar_input("ID a buscar: "))
             if encontrado is None:
-                print("No se encontro el inscrito. ⛔")
+                print("No se encontró el inscrito. ⛔")
             else:
                 print(encontrado)
         elif opcion == "4":
@@ -302,39 +320,39 @@ def menu_inscritos(inscritos):
         elif opcion == "0":
             break
         else:
-            print("Opcion invalida. ⛔")
+            print("Opción inválida. ⛔")
 
 
 def menu_historial(historial):
     while True:
-        mostrar_titulo("=== 📚 Modulo Historial Academico 📚 ===")
+        mostrar_titulo("=== 📚 Módulo Historial Académico 📚 ===")
         print("1. Agregar semestre ➕")
         print("2. Eliminar semestre 🗑️")
         print("3. Buscar semestre 🔎")
         print("4. Recorrer adelante ▶️")
-        print("5. Recorrer atras ◀️")
+        print("5. Recorrer atrás ◀️")
         print("6. Exportar JSON 💾")
         print("7. Importar JSON 📥")
         print("0. Volver ↩️")
-        opcion = validar_opcion("Seleccione una opcion: ", ["1", "2", "3", "4", "5", "6", "7", "0"])
+        opcion = validar_opcion("Seleccione una opción: ", ["1", "2", "3", "4", "5", "6", "7", "0"])
 
         if opcion == "1":
             historial.insertar_ordenado(pedir_semestre())
             print("✅ Semestre agregado.")
         elif opcion == "2":
-            anio = pedir_entero("Anio a eliminar: ", 2000, 2100)
-            term = pedir_entero("Termino a eliminar: ", 1, 2)
+            anio = pedir_entero("Año a eliminar: ", 2000, 2100)
+            term = pedir_entero("Término a eliminar: ", 1, 2)
             eliminado = historial.eliminar(anio, term)
             if eliminado is None:
-                print("No se encontro el semestre. ⛔")
+                print("No se encontró el semestre. ⛔")
             else:
                 print("✅ Semestre eliminado.")
         elif opcion == "3":
-            anio = pedir_entero("Anio a buscar: ", 2000, 2100)
-            term = pedir_entero("Termino a buscar: ", 1, 2)
+            anio = pedir_entero("Año a buscar: ", 2000, 2100)
+            term = pedir_entero("Término a buscar: ", 1, 2)
             encontrado = historial.buscar(anio, term)
             if encontrado is None:
-                print("No se encontro el semestre. ⛔")
+                print("No se encontró el semestre. ⛔")
             else:
                 print(encontrado)
         elif opcion == "4":
@@ -353,12 +371,12 @@ def menu_historial(historial):
         elif opcion == "0":
             break
         else:
-            print("Opcion invalida. ⛔")
+            print("Opción inválida. ⛔")
 
 
 def menu_grupos(grupos):
     while True:
-        mostrar_titulo("=== 🔄 Modulo Grupos Rotativos 🔄 ===")
+        mostrar_titulo("=== 🔄 Módulo Grupos Rotativos 🔄 ===")
         print("1. Agregar grupo ➕")
         print("2. Eliminar grupo 🗑️")
         print("3. Buscar grupo recursivamente 🔎")
@@ -367,7 +385,7 @@ def menu_grupos(grupos):
         print("6. Exportar JSON 💾")
         print("7. Importar JSON 📥")
         print("0. Volver ↩️")
-        opcion = validar_opcion("Seleccione una opcion: ", ["1", "2", "3", "4", "5", "6", "7", "0"])
+        opcion = validar_opcion("Seleccione una opción: ", ["1", "2", "3", "4", "5", "6", "7", "0"])
 
         if opcion == "1":
             grupo = {
@@ -380,13 +398,13 @@ def menu_grupos(grupos):
         elif opcion == "2":
             eliminado = grupos.eliminar(validar_input("Grupo a eliminar: "))
             if eliminado is None:
-                print("No se encontro el grupo. ⛔")
+                print("No se encontró el grupo. ⛔")
             else:
                 print("✅ Grupo eliminado:", eliminado["nombre_grupo"])
         elif opcion == "3":
             encontrado = grupos.buscar_recursivo(validar_input("Grupo a buscar: "))
             if encontrado is None:
-                print("No se encontro el grupo. ⛔")
+                print("No se encontró el grupo. ⛔")
             else:
                 print(encontrado)
         elif opcion == "4":
@@ -409,17 +427,17 @@ def menu_grupos(grupos):
         elif opcion == "0":
             break
         else:
-            print("Opcion invalida. ⛔")
+            print("Opción inválida. ⛔")
 
 
 def menu_reportes(inscritos, historial, grupos):
     while True:
-        mostrar_titulo("=== 📊 Modulo Reportes 📊 ===")
+        mostrar_titulo("=== 📊 Módulo Reportes 📊 ===")
         print("1. Top 3 mejores promedios 🏆")
         print("2. Siguiente grupo en turno 🔄")
         print("3. Cantidad de inscritos 👥")
         print("0. Volver ↩️")
-        opcion = validar_opcion("Seleccione una opcion: ", ["1", "2", "3", "0"])
+        opcion = validar_opcion("Seleccione una opción: ", ["1", "2", "3", "0"])
 
         if opcion == "1":
             reporte_top_3(historial)
@@ -430,7 +448,7 @@ def menu_reportes(inscritos, historial, grupos):
         elif opcion == "0":
             break
         else:
-            print("Opcion invalida. ⛔")
+            print("Opción inválida. ⛔")
 
 
 def main():
@@ -441,13 +459,13 @@ def main():
     cargar_datos(inscritos, historial, grupos)
 
     while True:
-        mostrar_titulo("=== 🏫 Sistema de Registros Academicos 🏫 ===")
+        mostrar_titulo("=== 🏫 Sistema de Registros Académicos 🏫 ===")
         print("1. Inscritos 👥")
         print("2. Historial 📚")
         print("3. Grupos 🔄")
         print("4. Reportes 📊")
         print("5. Salir 🚪")
-        opcion = validar_opcion("Seleccione una opcion: ", ["1", "2", "3", "4", "5"])
+        opcion = validar_opcion("Seleccione una opción: ", ["1", "2", "3", "4", "5"])
 
         if opcion == "1":
             menu_inscritos(inscritos)
@@ -461,7 +479,7 @@ def main():
             print("Saliendo del sistema... 🚪")
             break
         else:
-            print("Opcion invalida. ⛔")
+            print("Opción inválida. ⛔")
 
 
 if __name__ == "__main__":

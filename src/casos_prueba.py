@@ -20,9 +20,15 @@ def borrar_si_existe(ruta):
 def probar_lista_simple():
     print("Prueba de lista simple")
     lista = ListaSimple()
-    ana = Estudiante("Ana", "ana@correo.com")
-    luis = Estudiante("Luis", "luis@correo.com")
-    mia = Estudiante("Mia", "mia@correo.com")
+    ana = Estudiante("Ana", "ana@correo.com", "1000000001")
+    luis = Estudiante("Luis", "luis@correo.com", "1000000002")
+    mia = Estudiante("Mia", "mia@correo.com", "1000000003")
+
+    try:
+        Estudiante("Invalido", "invalido@correo.com", "123")
+        assert False
+    except ValueError:
+        pass
 
     lista.insertar_final(ana)
     lista.insertar_final(luis)
@@ -44,6 +50,8 @@ def probar_lista_simple():
     assert nueva.contar() == 2
     assert estudiante_mia is not None
     assert estudiante_mia.correo == "mia@correo.com"
+    assert estudiante_mia.ci_estudiante == mia.ci_estudiante
+    assert estudiante_mia.id_estudiante == mia.id_estudiante
     borrar_si_existe(ruta)
     print("OK lista simple")
 

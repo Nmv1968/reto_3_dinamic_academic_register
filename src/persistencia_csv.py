@@ -3,7 +3,7 @@ import csv
 from estudiante import Estudiante
 
 
-CAMPOS_INSCRITOS = ("id", "nombres", "correo")
+CAMPOS_INSCRITOS = ("id", "ci_estudiante", "nombres", "correo")
 
 
 def exportar_inscritos_csv(lista, ruta):
@@ -23,12 +23,6 @@ def importar_inscritos_csv(ruta, lista=None):
 	with open(ruta, "r", newline="", encoding="utf-8") as archivo:
 		lector = csv.DictReader(archivo)
 		for fila in lector:
-			destino.insertar_final(
-				Estudiante(
-					fila["nombres"],
-					fila["correo"],
-					fila["id"],
-				)
-			)
+			destino.insertar_final(Estudiante.desde_dict(fila))
 
 	return destino
