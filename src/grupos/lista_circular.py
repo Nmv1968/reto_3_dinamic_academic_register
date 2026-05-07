@@ -47,6 +47,21 @@ class ListaCircular:
 
         return self.buscar_recursivo(nombre_grupo, nodo.siguiente, inicio)
 
+    def buscar_por_estudiante_id(self, estudiante_id: str) -> Grupo | None:
+        if self.actual is None:
+            return None
+
+        actual: NodoCircular | None = self.actual
+        while True:
+            if actual is None:
+                return None
+            if str(estudiante_id) in actual.valor.integrantes_ids:
+                return actual.valor
+            actual = actual.siguiente
+            if actual == self.actual:
+                break
+        return None
+
     def eliminar(self, nombre_grupo: str) -> Grupo | None:
         if self.actual is None:
             return None

@@ -43,6 +43,28 @@ class ListaDoble:
         actual.anterior = nuevo
         return dato
 
+    def buscar_por_estudiante(self, estudiante_id: str) -> list[Semestre]:
+        actual = self.cabeza
+        historial: list[Semestre] = []
+        while actual is not None:
+            if actual.valor.estudiante_id == str(estudiante_id):
+                historial.append(actual.valor)
+            actual = actual.siguiente
+        return historial
+
+    def buscar_semestre(self, estudiante_id: str, anio: int, term: int) -> Semestre | None:
+        actual = self.cabeza
+        while actual is not None:
+            valor = actual.valor
+            if (
+                valor.estudiante_id == str(estudiante_id)
+                and valor.anio == anio
+                and valor.term == term
+            ):
+                return valor
+            actual = actual.siguiente
+        return None
+
     def buscar(self, anio: int, term: int) -> Semestre | None:
         actual = self.cabeza
         while actual is not None:
@@ -51,6 +73,14 @@ class ListaDoble:
                 return valor
             actual = actual.siguiente
         return None
+
+    def existe_estudiante(self, estudiante_id: str) -> bool:
+        actual = self.cabeza
+        while actual is not None:
+            if actual.valor.estudiante_id == str(estudiante_id):
+                return True
+            actual = actual.siguiente
+        return False
 
     def existe_anio(self, anio: int) -> bool:
         actual = self.cabeza
@@ -69,12 +99,37 @@ class ListaDoble:
             actual = actual.siguiente
         return terminos
 
-    def eliminar(self, anio: int, term: int) -> Semestre | None:
+    def existe_anio_de_estudiante(self, estudiante_id: str, anio: int) -> bool:
+        actual = self.cabeza
+        while actual is not None:
+            if actual.valor.estudiante_id == str(estudiante_id) and actual.valor.anio == anio:
+                return True
+            actual = actual.siguiente
+        return False
+
+    def obtener_terminos_por_estudiante_y_anio(self, estudiante_id: str, anio: int) -> list[int]:
+        actual = self.cabeza
+        terminos: list[int] = []
+        while actual is not None:
+            if (
+                actual.valor.estudiante_id == str(estudiante_id)
+                and actual.valor.anio == anio
+                and actual.valor.term not in terminos
+            ):
+                terminos.append(actual.valor.term)
+            actual = actual.siguiente
+        return terminos
+
+    def eliminar(self, estudiante_id: str, anio: int, term: int) -> Semestre | None:
         actual = self.cabeza
 
         while actual is not None:
             valor = actual.valor
-            if valor.anio == anio and valor.term == term:
+            if (
+                valor.estudiante_id == str(estudiante_id)
+                and valor.anio == anio
+                and valor.term == term
+            ):
                 if actual.anterior is None:
                     self.cabeza = actual.siguiente
                 else:
