@@ -1,9 +1,8 @@
 import os
 
-from estudiante import Estudiante
-from lista_circular import ListaCircular
-from lista_doble import ListaDoble
-from lista_simple import ListaSimple
+from grupos import Grupo, ListaCircular
+from historial import ListaDoble, Materia, Semestre
+from inscritos import Estudiante, ListaSimple
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -110,49 +109,132 @@ def cargar_datos(inscritos, historial, grupos):
         grupos.importar_json(RUTA_GRUPOS)
 
 
+def mostrar_tabla(titulo, encabezados, filas, detalles=None, total=None):
+    mostrar_titulo(titulo)
+
+    anchos = []
+    for indice, encabezado in enumerate(encabezados):
+        ancho = len(encabezado)
+        for fila in filas:
+            ancho = max(ancho, len(str(fila[indice])))
+        anchos.append(ancho)
+
+    ancho_interno = sum(anchos) + (3 * (len(encabezados) - 1))
+    if detalles:
+        ancho_detalle = max(len(detalle) for detalle in detalles)
+        if ancho_detalle > ancho_interno:
+            anchos[-1] += ancho_detalle - ancho_interno
+            ancho_interno = ancho_detalle
+
+    separador = "+-" + "-+-".join("-" * ancho for ancho in anchos) + "-+"
+    encabezado_tabla = "| " + " | ".join(
+        encabezado.ljust(ancho) for encabezado, ancho in zip(encabezados, anchos)
+    ) + " |"
+
+    print(separador)
+    print(encabezado_tabla)
+    print(separador)
+    for indice, fila in enumerate(filas):
+        print(
+            "| "
+            + " | ".join(str(valor).ljust(ancho) for valor, ancho in zip(fila, anchos))
+            + " |"
+        )
+        if detalles:
+            print("| " + detalles[indice].ljust(ancho_interno) + " |")
+        print(separador)
+
+    if total is not None:
+        print(total)
+
+
 def mostrar_inscritos(inscritos):
     datos = inscritos.recorrer()
     if len(datos) == 0:
         print("No hay inscritos registrados. ⛔")
         return
 
-    for inscrito in datos:
-        print(
-            "ID:",
-            inscrito.id_estudiante,
-            "| CI:",
-            inscrito.ci_estudiante,
-            "| Nombre:",
+    encabezados = ("No", "Nombres", "CI", "Correo")
+    filas = [
+        (
+            str(indice + 1),
             inscrito.nombres,
-            "| Correo:",
+            inscrito.ci_estudiante,
             inscrito.correo,
         )
+        for indice, inscrito in enumerate(datos)
+    ]
+
+    detalles = [f"ID: {inscrito.id_estudiante}" for inscrito in datos]
+    mostrar_tabla(
+        "Listado de inscritos",
+        encabezados,
+        filas,
+        detalles,
+        f"Total de inscritos: {len(datos)}",
+    )
+
+
+def mostrar_estudiante(estudiante, encabezado="===ESTUDIANTE ENCONTRADO==="):
+    print(encabezado)
+    print("ID:", estudiante.id_estudiante)
+    print("Nombres:", estudiante.nombres)
+    print("Correo:", estudiante.correo)
+    print("CI:", estudiante.ci_estudiante)
+    print("========================")
+
+
+def mostrar_semestre(semestre, encabezado="===SEMESTRE ENCONTRADO==="):
+    print(encabezado)
+    print("Año:", semestre.anio)
+    print("Término:", semestre.term)
+    print("Materias registradas:", len(semestre.materias))
+    if len(semestre.materias) == 0:
+        print("Detalle de materias: Sin materias registradas")
+    else:
+        print("Detalle de materias:")
+        for materia in semestre.materias:
+            print(f"- {materia.cod} | {materia.nombre} | Nota: {materia.nota}")
+    print("========================")
+
+
+def mostrar_grupo(grupo, encabezado="===GRUPO ENCONTRADO==="):
+    print(encabezado)
+    print("Nombre del grupo:", grupo.nombre_grupo)
+    print("Tutor:", grupo.tutor)
+    print("Tema:", grupo.tema)
+    print("========================")
 
 
 def mostrar_historial(historial, hacia_atras=False):
     if hacia_atras:
         datos = historial.recorrer_atras()
+        titulo = "Listado del historial académico (hacia atrás)"
     else:
         datos = historial.recorrer_adelante()
+        titulo = "Listado del historial académico (hacia adelante)"
 
     if len(datos) == 0:
         print("No hay semestres registrados. ⛔")
         return
 
+    encabezados = ("No", "Año", "Término", "Materias")
+    filas = [
+        (str(indice + 1), str(semestre.anio), str(semestre.term), str(len(semestre.materias)))
+        for indice, semestre in enumerate(datos)
+    ]
+    detalles = []
     for semestre in datos:
-        print("Año:", semestre["anio"], "| Término:", semestre["term"])
-        materias = semestre.get("materias", [])
-        if len(materias) == 0:
-            print("  Sin materias registradas")
+        if len(semestre.materias) == 0:
+            detalles.append("Detalle: Sin materias registradas")
         else:
-            for materia in materias:
-                print(
-                    "  -",
-                    materia["cod"],
-                    materia["nombre"],
-                    "Nota:",
-                    materia["nota"],
-                )
+            materias = " | ".join(
+                f"{materia.cod} - {materia.nombre} (Nota: {materia.nota})"
+                for materia in semestre.materias
+            )
+            detalles.append(f"Detalle: {materias}")
+
+    mostrar_tabla(titulo, encabezados, filas, detalles, f"Total de semestres: {len(datos)}")
 
 
 def mostrar_grupos(grupos):
@@ -161,43 +243,40 @@ def mostrar_grupos(grupos):
         print("No hay grupos registrados. ⛔")
         return
 
-    for grupo in datos:
-        print(
-            "Grupo:",
-            grupo["nombre_grupo"],
-            "| Tutor:",
-            grupo["tutor"],
-            "| Tema:",
-            grupo["tema"],
-        )
+    encabezados = ("No", "Grupo", "Tutor", "Tema")
+    filas = [
+        (str(indice + 1), grupo.nombre_grupo, grupo.tutor, grupo.tema)
+        for indice, grupo in enumerate(datos)
+    ]
+    mostrar_tabla("Listado de grupos", encabezados, filas, total=f"Total de grupos: {len(datos)}")
 
 
 def pedir_semestre():
     anio = pedir_entero("Ingrese el año: ", 2000, 2100)
     term = pedir_entero("Ingrese el término: ", 1, 2)
     cantidad = pedir_entero("¿Cuántas materias desea agregar?: ", 1)
-    materias = []
+    materias: list[Materia] = []
 
     contador = 0
     while contador < cantidad:
         print("Materia", contador + 1)
         cod = validar_input("Código: ")
         nombre = validar_input("Nombre: ")
-        nota = pedir_flotante("Nota: ", 0, 5)
-        materias.append({"cod": cod, "nombre": nombre, "nota": nota})
+        nota = pedir_flotante("Nota: ", 0, 10)
+        materias.append(Materia(cod, nombre, nota))
         contador += 1
 
-    return {"anio": anio, "term": term, "materias": materias}
+    return Semestre(anio, term, materias)
 
 
 def promedio_semestre(semestre):
-    materias = semestre.get("materias", [])
+    materias = semestre.materias
     if len(materias) == 0:
         return 0
 
     suma = 0
     for materia in materias:
-        suma += materia["nota"]
+        suma += materia.nota
     return suma / len(materias)
 
 
@@ -211,8 +290,8 @@ def reporte_top_3(historial):
     for semestre in semestres:
         datos.append(
             {
-                "anio": semestre["anio"],
-                "term": semestre["term"],
+                "anio": semestre.anio,
+                "term": semestre.term,
                 "promedio": promedio_semestre(semestre),
             }
         )
@@ -232,21 +311,26 @@ def reporte_top_3(historial):
     if len(datos) < 3:
         tope = len(datos)
 
-    print("Top de promedios:")
+    filas = []
     indice = 0
     while indice < tope:
         item = datos[indice]
-        print(
-            indice + 1,
-            ". Año:",
-            item["anio"],
-            "Término:",
-            item["term"],
-            "Promedio:",
-            round(item["promedio"], 2),
-            sep="",
+        filas.append(
+            (
+                str(indice + 1),
+                str(item["anio"]),
+                str(item["term"]),
+                str(round(item["promedio"], 2)),
+            )
         )
         indice += 1
+
+    mostrar_tabla(
+        "Top 3 mejores promedios",
+        ("Puesto", "Año", "Término", "Promedio"),
+        filas,
+        total=f"Total mostrado: {tope}",
+    )
 
 
 def reporte_siguiente_grupo(grupos):
@@ -254,14 +338,7 @@ def reporte_siguiente_grupo(grupos):
     if grupo is None:
         print("No hay grupos registrados. ⛔")
         return
-    print(
-        "Siguiente grupo en turno:",
-        grupo["nombre_grupo"],
-        "| Tutor:",
-        grupo["tutor"],
-        "| Tema:",
-        grupo["tema"],
-    )
+    mostrar_grupo(grupo, "===SIGUIENTE GRUPO EN TURNO===")
 
 
 def reporte_cantidad_inscritos(inscritos):
@@ -275,6 +352,27 @@ def crear_estudiante():
     return Estudiante(nombres, correo, ci_estudiante)
 
 
+def pedir_anio_y_termino_existente(historial, accion):
+    anio = pedir_entero(f"Año a {accion}: ", 2000, 2100)
+
+    if not historial.existe_anio(anio):
+        print("No existe ningún semestre registrado para ese año. ⛔")
+        return None
+
+    terminos_disponibles = historial.obtener_terminos_por_anio(anio)
+    print(
+        "Términos disponibles para ese año:",
+        ", ".join(str(item) for item in terminos_disponibles),
+    )
+
+    term = pedir_entero(f"Término a {accion}: ", 1, 2)
+    if term not in terminos_disponibles:
+        print("No existe ese término para el año ingresado. ⛔")
+        return None
+
+    return anio, term
+
+
 def menu_inscritos(inscritos):
     while True:
         mostrar_titulo("=== 👥 Módulo Inscritos 👥 ===")
@@ -285,7 +383,9 @@ def menu_inscritos(inscritos):
         print("5. Exportar CSV 💾")
         print("6. Importar CSV 📥")
         print("0. Volver ↩️")
-        opcion = validar_opcion("Seleccione una opción: ", ["1", "2", "3", "4", "5", "6", "0"])
+        opcion = validar_opcion(
+            "Seleccione una opción: ", ["1", "2", "3", "4", "5", "6", "0"]
+        )
 
         if opcion == "1":
             estudiante = crear_estudiante()
@@ -301,11 +401,11 @@ def menu_inscritos(inscritos):
             else:
                 print("✅ Inscrito eliminado:", eliminado.nombres)
         elif opcion == "3":
-            encontrado = inscritos.buscar(validar_input("ID a buscar: "))
+            encontrado = inscritos.buscar_por_ci(validar_ci("Cédula a buscar: "))
             if encontrado is None:
                 print("No se encontró el inscrito. ⛔")
             else:
-                print(encontrado)
+                mostrar_estudiante(encontrado)
         elif opcion == "4":
             mostrar_inscritos(inscritos)
         elif opcion == "5":
@@ -334,27 +434,36 @@ def menu_historial(historial):
         print("6. Exportar JSON 💾")
         print("7. Importar JSON 📥")
         print("0. Volver ↩️")
-        opcion = validar_opcion("Seleccione una opción: ", ["1", "2", "3", "4", "5", "6", "7", "0"])
+        opcion = validar_opcion(
+            "Seleccione una opción: ", ["1", "2", "3", "4", "5", "6", "7", "0"]
+        )
 
         if opcion == "1":
             historial.insertar_ordenado(pedir_semestre())
             print("✅ Semestre agregado.")
         elif opcion == "2":
-            anio = pedir_entero("Año a eliminar: ", 2000, 2100)
-            term = pedir_entero("Término a eliminar: ", 1, 2)
+            datos_semestre = pedir_anio_y_termino_existente(historial, "eliminar")
+            if datos_semestre is None:
+                continue
+
+            anio, term = datos_semestre
+
             eliminado = historial.eliminar(anio, term)
             if eliminado is None:
                 print("No se encontró el semestre. ⛔")
             else:
                 print("✅ Semestre eliminado.")
         elif opcion == "3":
-            anio = pedir_entero("Año a buscar: ", 2000, 2100)
-            term = pedir_entero("Término a buscar: ", 1, 2)
+            datos_semestre = pedir_anio_y_termino_existente(historial, "buscar")
+            if datos_semestre is None:
+                continue
+
+            anio, term = datos_semestre
             encontrado = historial.buscar(anio, term)
             if encontrado is None:
                 print("No se encontró el semestre. ⛔")
             else:
-                print(encontrado)
+                mostrar_semestre(encontrado)
         elif opcion == "4":
             mostrar_historial(historial, False)
         elif opcion == "5":
@@ -385,14 +494,16 @@ def menu_grupos(grupos):
         print("6. Exportar JSON 💾")
         print("7. Importar JSON 📥")
         print("0. Volver ↩️")
-        opcion = validar_opcion("Seleccione una opción: ", ["1", "2", "3", "4", "5", "6", "7", "0"])
+        opcion = validar_opcion(
+            "Seleccione una opción: ", ["1", "2", "3", "4", "5", "6", "7", "0"]
+        )
 
         if opcion == "1":
-            grupo = {
-                "nombre_grupo": validar_input("Nombre del grupo: "),
-                "tutor": validar_input("Tutor: "),
-                "tema": validar_input("Tema: "),
-            }
+            grupo = Grupo(
+                validar_input("Nombre del grupo: "),
+                validar_input("Tutor: "),
+                validar_input("Tema: "),
+            )
             grupos.insertar(grupo)
             print("✅ Grupo agregado.")
         elif opcion == "2":
@@ -400,19 +511,19 @@ def menu_grupos(grupos):
             if eliminado is None:
                 print("No se encontró el grupo. ⛔")
             else:
-                print("✅ Grupo eliminado:", eliminado["nombre_grupo"])
+                print("✅ Grupo eliminado:", eliminado.nombre_grupo)
         elif opcion == "3":
             encontrado = grupos.buscar_recursivo(validar_input("Grupo a buscar: "))
             if encontrado is None:
                 print("No se encontró el grupo. ⛔")
             else:
-                print(encontrado)
+                mostrar_grupo(encontrado)
         elif opcion == "4":
             grupo = grupos.rotar(pedir_entero("Cantidad de rotaciones: ", 0))
             if grupo is None:
                 print("No hay grupos registrados. ⛔")
             else:
-                print("✅ Grupo actual:", grupo["nombre_grupo"])
+                mostrar_grupo(grupo, "===GRUPO ACTUAL===")
         elif opcion == "5":
             mostrar_grupos(grupos)
         elif opcion == "6":
@@ -484,4 +595,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

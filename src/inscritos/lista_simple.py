@@ -1,15 +1,15 @@
-
-from nodo_simple import NodoSimple
+from .estudiante import Estudiante
+from .nodo_simple import NodoSimple
 
 
 class ListaSimple:
     def __init__(self):
-        self.cabeza = None
+        self.cabeza: NodoSimple | None = None
 
-    def esta_vacia(self):
+    def esta_vacia(self) -> bool:
         return self.cabeza is None
 
-    def insertar_final(self, dato):
+    def insertar_final(self, dato: Estudiante) -> Estudiante:
         nuevo = NodoSimple(dato)
         if self.cabeza is None:
             self.cabeza = nuevo
@@ -21,7 +21,7 @@ class ListaSimple:
         actual.siguiente = nuevo
         return dato
 
-    def buscar(self, identificador):
+    def buscar(self, identificador: str) -> Estudiante | None:
         actual = self.cabeza
         while actual is not None:
             valor = actual.valor
@@ -30,9 +30,18 @@ class ListaSimple:
             actual = actual.siguiente
         return None
 
-    def eliminar(self, identificador):
+    def buscar_por_ci(self, ci_estudiante: str) -> Estudiante | None:
         actual = self.cabeza
-        anterior = None
+        while actual is not None:
+            valor = actual.valor
+            if valor.ci_estudiante == str(ci_estudiante):
+                return valor
+            actual = actual.siguiente
+        return None
+
+    def eliminar(self, identificador: str) -> Estudiante | None:
+        actual = self.cabeza
+        anterior: NodoSimple | None = None
 
         while actual is not None:
             valor = actual.valor
@@ -46,15 +55,15 @@ class ListaSimple:
             actual = actual.siguiente
         return None
 
-    def recorrer(self):
+    def recorrer(self) -> list[Estudiante]:
         actual = self.cabeza
-        recorrido = []
+        recorrido: list[Estudiante] = []
         while actual is not None:
             recorrido.append(actual.valor)
             actual = actual.siguiente
         return recorrido
 
-    def contar(self):
+    def contar(self) -> int:
         total = 0
         actual = self.cabeza
         while actual is not None:
@@ -66,11 +75,11 @@ class ListaSimple:
         self.cabeza = None
 
     def exportar_csv(self, ruta):
-        from persistencia_csv import exportar_inscritos_csv
+        from .persistencia_csv import exportar_inscritos_csv
 
         exportar_inscritos_csv(self, ruta)
 
     def importar_csv(self, ruta):
-        from persistencia_csv import importar_inscritos_csv
+        from .persistencia_csv import importar_inscritos_csv
 
         importar_inscritos_csv(ruta, self)

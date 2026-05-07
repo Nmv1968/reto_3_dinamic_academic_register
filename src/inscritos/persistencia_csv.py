@@ -1,6 +1,6 @@
 import csv
 
-from estudiante import Estudiante
+from .estudiante import Estudiante
 
 
 CAMPOS_INSCRITOS = ("id", "ci_estudiante", "nombres", "correo")
@@ -15,7 +15,7 @@ def exportar_inscritos_csv(lista, ruta):
 
 
 def importar_inscritos_csv(ruta, lista=None):
-	from lista_simple import ListaSimple
+	from .lista_simple import ListaSimple
 
 	destino = lista if lista is not None else ListaSimple()
 	destino.limpiar()

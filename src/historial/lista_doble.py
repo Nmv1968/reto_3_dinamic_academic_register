@@ -1,15 +1,16 @@
-from nodo_doble import NodoDoble
+from .nodo_doble import NodoDoble
+from .semestre import Semestre
 
 
 class ListaDoble:
     def __init__(self):
-        self.cabeza = None
-        self.cola = None
+        self.cabeza: NodoDoble | None = None
+        self.cola: NodoDoble | None = None
 
-    def esta_vacia(self):
+    def esta_vacia(self) -> bool:
         return self.cabeza is None
 
-    def insertar_ordenado(self, dato):
+    def insertar_ordenado(self, dato: Semestre) -> Semestre:
         nuevo = NodoDoble(dato)
 
         if self.cabeza is None:
@@ -17,7 +18,7 @@ class ListaDoble:
             self.cola = nuevo
             return dato
 
-        actual = self.cabeza
+        actual: NodoDoble | None = self.cabeza
         while actual is not None and self._comparar(actual.valor, dato) <= 0:
             actual = actual.siguiente
 
@@ -42,21 +43,38 @@ class ListaDoble:
         actual.anterior = nuevo
         return dato
 
-    def buscar(self, anio, term):
+    def buscar(self, anio: int, term: int) -> Semestre | None:
         actual = self.cabeza
         while actual is not None:
             valor = actual.valor
-            if valor.get("anio") == anio and valor.get("term") == term:
+            if valor.anio == anio and valor.term == term:
                 return valor
             actual = actual.siguiente
         return None
 
-    def eliminar(self, anio, term):
+    def existe_anio(self, anio: int) -> bool:
+        actual = self.cabeza
+        while actual is not None:
+            if actual.valor.anio == anio:
+                return True
+            actual = actual.siguiente
+        return False
+
+    def obtener_terminos_por_anio(self, anio: int) -> list[int]:
+        actual = self.cabeza
+        terminos: list[int] = []
+        while actual is not None:
+            if actual.valor.anio == anio and actual.valor.term not in terminos:
+                terminos.append(actual.valor.term)
+            actual = actual.siguiente
+        return terminos
+
+    def eliminar(self, anio: int, term: int) -> Semestre | None:
         actual = self.cabeza
 
         while actual is not None:
             valor = actual.valor
-            if valor.get("anio") == anio and valor.get("term") == term:
+            if valor.anio == anio and valor.term == term:
                 if actual.anterior is None:
                     self.cabeza = actual.siguiente
                 else:
@@ -71,16 +89,16 @@ class ListaDoble:
             actual = actual.siguiente
         return None
 
-    def recorrer_adelante(self):
-        recorrido = []
+    def recorrer_adelante(self) -> list[Semestre]:
+        recorrido: list[Semestre] = []
         actual = self.cabeza
         while actual is not None:
             recorrido.append(actual.valor)
             actual = actual.siguiente
         return recorrido
 
-    def recorrer_atras(self):
-        recorrido = []
+    def recorrer_atras(self) -> list[Semestre]:
+        recorrido: list[Semestre] = []
         actual = self.cola
         while actual is not None:
             recorrido.append(actual.valor)
@@ -92,22 +110,22 @@ class ListaDoble:
         self.cola = None
 
     def exportar_json(self, ruta):
-        from persistencia_json import exportar_historial_json
+        from .persistencia_json import exportar_historial_json
 
         exportar_historial_json(self, ruta)
 
     def importar_json(self, ruta):
-        from persistencia_json import importar_historial_json
+        from .persistencia_json import importar_historial_json
 
         importar_historial_json(ruta, self)
 
-    def _comparar(self, dato1, dato2):
-        if dato1["anio"] < dato2["anio"]:
+    def _comparar(self, dato1: Semestre, dato2: Semestre) -> int:
+        if dato1.anio < dato2.anio:
             return -1
-        if dato1["anio"] > dato2["anio"]:
+        if dato1.anio > dato2.anio:
             return 1
-        if dato1["term"] < dato2["term"]:
+        if dato1.term < dato2.term:
             return -1
-        if dato1["term"] > dato2["term"]:
+        if dato1.term > dato2.term:
             return 1
         return 0

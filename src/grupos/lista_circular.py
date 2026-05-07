@@ -1,14 +1,15 @@
-from nodo_circular import NodoCircular
+from .grupo import Grupo
+from .nodo_circular import NodoCircular
 
 
 class ListaCircular:
     def __init__(self):
-        self.actual = None
+        self.actual: NodoCircular | None = None
 
-    def esta_vacia(self):
+    def esta_vacia(self) -> bool:
         return self.actual is None
 
-    def insertar(self, dato):
+    def insertar(self, dato: Grupo) -> Grupo:
         nuevo = NodoCircular(dato)
 
         if self.actual is None:
@@ -22,7 +23,12 @@ class ListaCircular:
             ultimo.siguiente = nuevo
         return dato
 
-    def buscar_recursivo(self, nombre_grupo, nodo=None, inicio=None):
+    def buscar_recursivo(
+        self,
+        nombre_grupo: str,
+        nodo: NodoCircular | None = None,
+        inicio: NodoCircular | None = None,
+    ) -> Grupo | None:
         if self.actual is None:
             return None
 
@@ -33,7 +39,7 @@ class ListaCircular:
         if nodo is None:
             return None
 
-        if nodo.valor.get("nombre_grupo") == nombre_grupo:
+        if nodo.valor.nombre_grupo == nombre_grupo:
             return nodo.valor
 
         if nodo.siguiente == inicio:
@@ -41,18 +47,18 @@ class ListaCircular:
 
         return self.buscar_recursivo(nombre_grupo, nodo.siguiente, inicio)
 
-    def eliminar(self, nombre_grupo):
+    def eliminar(self, nombre_grupo: str) -> Grupo | None:
         if self.actual is None:
-            return
+            return None
 
-        actual = self.actual
-        anterior = None
+        actual: NodoCircular | None = self.actual
+        anterior: NodoCircular | None = None
 
         while True:
             if actual is None:
                 return None
 
-            if actual.valor.get("nombre_grupo") == nombre_grupo:
+            if actual.valor.nombre_grupo == nombre_grupo:
                 if actual.siguiente == actual:
                     eliminado = actual.valor
                     self.actual = None
@@ -78,7 +84,7 @@ class ListaCircular:
                 break
         return None
 
-    def rotar(self, k):
+    def rotar(self, k: int) -> Grupo | None:
         if self.actual is None:
             return None
 
@@ -89,13 +95,13 @@ class ListaCircular:
             pasos += 1
         return self.actual.valor
 
-    def recorrer(self):
-        recorrido = []
+    def recorrer(self) -> list[Grupo]:
+        recorrido: list[Grupo] = []
         if self.actual is None:
             return recorrido
 
         recorrido.append(self.actual.valor)
-        nodo = self.actual.siguiente
+        nodo: NodoCircular | None = self.actual.siguiente
         while nodo != self.actual:
             if nodo is None:
                 break
@@ -107,16 +113,16 @@ class ListaCircular:
         self.actual = None
 
     def exportar_json(self, ruta):
-        from persistencia_json import exportar_grupos_json
+        from .persistencia_json import exportar_grupos_json
 
         exportar_grupos_json(self, ruta)
 
     def importar_json(self, ruta):
-        from persistencia_json import importar_grupos_json
+        from .persistencia_json import importar_grupos_json
 
         importar_grupos_json(ruta, self)
 
-    def _ultimo(self):
+    def _ultimo(self) -> NodoCircular | None:
         ultimo = self.actual
         while ultimo is not None and ultimo.siguiente != self.actual:
             ultimo = ultimo.siguiente
