@@ -1,3 +1,9 @@
+"""Paquete de historial académico.
+
+Expone los modelos y utilidades necesarias para gestionar semestres, materias,
+la lista doble del historial y su persistencia en archivos JSON.
+"""
+
 from .lista_doble import ListaDoble
 from .materia import Materia
 from .nodo_doble import NodoDoble

@@ -1,3 +1,11 @@
+"""Aplicación principal del sistema de registros académicos.
+
+Este módulo coordina la interacción por consola entre la lista simple de
+inscritos, la lista doble del historial académico y la lista circular de
+grupos de exposición. También centraliza las validaciones de entrada, los
+formatos de visualización y la carga o exportación de datos persistidos.
+"""
+
 import os
 
 from grupos import Grupo, ListaCircular
@@ -13,15 +21,39 @@ RUTA_GRUPOS = os.path.join(DATA_DIR, "grupos.json")
 
 
 def mostrar_titulo(titulo):
+    """Imprime un encabezado con una línea de separación.
+
+    Args:
+        titulo (str): Texto que se mostrará como título.
+    """
+
     print("\n" + titulo)
     print("=" * len(titulo))
 
 
 def archivo_tiene_datos(ruta):
+    """Verifica si un archivo existe y contiene información.
+
+    Args:
+        ruta (str): Ruta del archivo que se desea comprobar.
+
+    Returns:
+        bool: True si el archivo existe y su tamaño es mayor que cero.
+    """
+
     return os.path.exists(ruta) and os.path.getsize(ruta) > 0
 
 
 def validar_input(mensaje):
+    """Solicita una entrada de texto no vacía.
+
+    Args:
+        mensaje (str): Texto que se muestra al usuario en consola.
+
+    Returns:
+        str: Valor ingresado sin espacios al inicio ni al final.
+    """
+
     while True:
         texto = input(mensaje)
         if texto.strip() != "":
@@ -30,6 +62,16 @@ def validar_input(mensaje):
 
 
 def validar_opcion(mensaje, opciones_validas):
+    """Solicita una opción y valida que pertenezca al conjunto permitido.
+
+    Args:
+        mensaje (str): Texto que se muestra al solicitar la opción.
+        opciones_validas (list[str] | tuple[str, ...]): Opciones aceptadas.
+
+    Returns:
+        str: Opción válida seleccionada por el usuario.
+    """
+
     while True:
         opcion = validar_input(mensaje)
         if opcion in opciones_validas:
@@ -38,6 +80,17 @@ def validar_opcion(mensaje, opciones_validas):
 
 
 def pedir_entero(mensaje, minimo=None, maximo=None):
+    """Solicita un número entero dentro de un rango opcional.
+
+    Args:
+        mensaje (str): Texto mostrado al solicitar el valor.
+        minimo (int | None): Límite inferior aceptado.
+        maximo (int | None): Límite superior aceptado.
+
+    Returns:
+        int: Número entero validado.
+    """
+
     while True:
         texto = validar_input(mensaje)
         try:
@@ -54,6 +107,17 @@ def pedir_entero(mensaje, minimo=None, maximo=None):
 
 
 def pedir_flotante(mensaje, minimo=None, maximo=None):
+    """Solicita un número flotante dentro de un rango opcional.
+
+    Args:
+        mensaje (str): Texto mostrado al solicitar el valor.
+        minimo (float | None): Límite inferior aceptado.
+        maximo (float | None): Límite superior aceptado.
+
+    Returns:
+        float: Número decimal validado.
+    """
+
     while True:
         texto = validar_input(mensaje)
         try:
@@ -70,6 +134,15 @@ def pedir_flotante(mensaje, minimo=None, maximo=None):
 
 
 def validar_ci(mensaje):
+    """Solicita una cédula ecuatoriana de 10 dígitos.
+
+    Args:
+        mensaje (str): Texto mostrado al solicitar la cédula.
+
+    Returns:
+        str: Cédula válida compuesta solo por dígitos.
+    """
+
     while True:
         ci_estudiante = validar_input(mensaje)
         if not ci_estudiante.isdigit():
@@ -82,6 +155,15 @@ def validar_ci(mensaje):
 
 
 def validar_correo(mensaje):
+    """Solicita un correo electrónico con formato básico válido.
+
+    Args:
+        mensaje (str): Texto mostrado al solicitar el correo.
+
+    Returns:
+        str: Correo validado.
+    """
+
     while True:
         correo = validar_input(mensaje)
         if " " in correo:
@@ -101,6 +183,14 @@ def validar_correo(mensaje):
 
 
 def cargar_datos(inscritos, historial, grupos):
+    """Carga los datos persistidos del sistema.
+
+    Args:
+        inscritos (ListaSimple): Estructura donde se cargan los inscritos.
+        historial (ListaDoble): Estructura donde se cargan los semestres.
+        grupos (ListaCircular): Estructura donde se cargan los grupos.
+    """
+
     if archivo_tiene_datos(RUTA_INSCRITOS):
         inscritos.importar_csv(RUTA_INSCRITOS)
     if archivo_tiene_datos(RUTA_HISTORIAL):
@@ -110,6 +200,16 @@ def cargar_datos(inscritos, historial, grupos):
 
 
 def mostrar_tabla(titulo, encabezados, filas, detalles=None, total=None):
+    """Renderiza una tabla ASCII con detalles opcionales.
+
+    Args:
+        titulo (str): Título que se mostrará antes de la tabla.
+        encabezados (tuple[str, ...]): Nombres de las columnas.
+        filas (list[tuple[str, ...]]): Datos principales de cada fila.
+        detalles (list[str] | None): Texto adicional asociado a cada fila.
+        total (str | None): Resumen final que se imprime bajo la tabla.
+    """
+
     mostrar_titulo(titulo)
 
     anchos = []
@@ -149,6 +249,12 @@ def mostrar_tabla(titulo, encabezados, filas, detalles=None, total=None):
 
 
 def mostrar_inscritos(inscritos):
+    """Muestra el listado tabular de estudiantes inscritos.
+
+    Args:
+        inscritos (ListaSimple): Lista simple con los estudiantes registrados.
+    """
+
     datos = inscritos.recorrer()
     if len(datos) == 0:
         print("No hay inscritos registrados. ⛔")
@@ -176,6 +282,13 @@ def mostrar_inscritos(inscritos):
 
 
 def mostrar_estudiante(estudiante, encabezado="===ESTUDIANTE ENCONTRADO==="):
+    """Imprime los datos completos de un estudiante en formato vertical.
+
+    Args:
+        estudiante (Estudiante): Estudiante que se desea mostrar.
+        encabezado (str): Texto que se imprime como encabezado del bloque.
+    """
+
     print(encabezado)
     print("ID:", estudiante.id_estudiante)
     print("Nombres:", estudiante.nombres)
@@ -185,12 +298,32 @@ def mostrar_estudiante(estudiante, encabezado="===ESTUDIANTE ENCONTRADO==="):
 
 
 def obtener_estudiante_por_id(inscritos, estudiante_id):
+    """Busca un estudiante inscrito por su identificador interno.
+
+    Args:
+        inscritos (ListaSimple): Lista simple de inscritos.
+        estudiante_id (str): Identificador único del estudiante.
+
+    Returns:
+        Estudiante | None: Estudiante encontrado o None si no existe.
+    """
+
     if estudiante_id == "":
         return None
     return inscritos.buscar(estudiante_id)
 
 
 def obtener_nombre_estudiante(inscritos, estudiante_id):
+    """Obtiene el nombre visible de un estudiante.
+
+    Args:
+        inscritos (ListaSimple): Lista simple de inscritos.
+        estudiante_id (str): Identificador interno del estudiante.
+
+    Returns:
+        str: Nombre del estudiante o un texto de estado si no existe.
+    """
+
     if estudiante_id == "":
         return "Sin asignar"
 
@@ -201,6 +334,16 @@ def obtener_nombre_estudiante(inscritos, estudiante_id):
 
 
 def obtener_resumen_estudiante(inscritos, estudiante_id):
+    """Devuelve un resumen corto de un estudiante.
+
+    Args:
+        inscritos (ListaSimple): Lista simple de inscritos.
+        estudiante_id (str): Identificador interno del estudiante.
+
+    Returns:
+        str: Texto con cédula y nombres, o un mensaje de estado.
+    """
+
     if estudiante_id == "":
         return "Sin asignar"
 
@@ -211,6 +354,15 @@ def obtener_resumen_estudiante(inscritos, estudiante_id):
 
 
 def describir_materias(semestre):
+    """Construye una descripción resumida de las materias de un semestre.
+
+    Args:
+        semestre (Semestre): Semestre cuyas materias se desean describir.
+
+    Returns:
+        str: Texto con las materias registradas o un mensaje de ausencia.
+    """
+
     if len(semestre.materias) == 0:
         return "Sin materias registradas"
 
@@ -221,6 +373,16 @@ def describir_materias(semestre):
 
 
 def describir_integrantes(grupo, inscritos):
+    """Genera las descripciones visibles de los integrantes de un grupo.
+
+    Args:
+        grupo (Grupo): Grupo cuyos integrantes se desean listar.
+        inscritos (ListaSimple): Lista simple usada para resolver estudiantes.
+
+    Returns:
+        list[str]: Lista de textos con el resumen de cada integrante.
+    """
+
     if len(grupo.integrantes_ids) == 0:
         return ["Sin integrantes registrados"]
 
@@ -231,6 +393,14 @@ def describir_integrantes(grupo, inscritos):
 
 
 def mostrar_semestre(inscritos, semestre, encabezado="===SEMESTRE ENCONTRADO==="):
+    """Muestra un semestre individual con el estudiante asociado.
+
+    Args:
+        inscritos (ListaSimple): Lista simple usada para resolver el estudiante.
+        semestre (Semestre): Semestre que se desea mostrar.
+        encabezado (str): Texto que se imprime como encabezado.
+    """
+
     resumen_estudiante = obtener_resumen_estudiante(inscritos, semestre.estudiante_id)
     print(encabezado)
     print("Estudiante:", resumen_estudiante)
@@ -247,6 +417,14 @@ def mostrar_semestre(inscritos, semestre, encabezado="===SEMESTRE ENCONTRADO==="
 
 
 def mostrar_grupo(inscritos, grupo, encabezado="===GRUPO ENCONTRADO==="):
+    """Muestra los datos de un grupo y sus integrantes.
+
+    Args:
+        inscritos (ListaSimple): Lista simple usada para resolver integrantes.
+        grupo (Grupo): Grupo que se desea mostrar.
+        encabezado (str): Texto que se imprime como encabezado.
+    """
+
     print(encabezado)
     print("Nombre del grupo:", grupo.nombre_grupo)
     print("Tutor:", grupo.tutor)
@@ -259,6 +437,14 @@ def mostrar_grupo(inscritos, grupo, encabezado="===GRUPO ENCONTRADO==="):
 
 
 def mostrar_historial(inscritos, historial, hacia_atras=False):
+    """Muestra todo el historial académico en formato tabular.
+
+    Args:
+        inscritos (ListaSimple): Lista simple usada para resolver estudiantes.
+        historial (ListaDoble): Lista doble con los semestres registrados.
+        hacia_atras (bool): Indica si el recorrido debe hacerse desde la cola.
+    """
+
     if hacia_atras:
         datos = historial.recorrer_atras()
         titulo = "Listado del historial académico (hacia atrás)"
@@ -287,6 +473,14 @@ def mostrar_historial(inscritos, historial, hacia_atras=False):
 
 
 def mostrar_historial_estudiante(inscritos, estudiante, semestres):
+    """Muestra el historial de un estudiante con formato vertical o tabular.
+
+    Args:
+        inscritos (ListaSimple): Lista simple de inscritos.
+        estudiante (Estudiante): Estudiante dueño del historial.
+        semestres (list[Semestre]): Semestres asociados al estudiante.
+    """
+
     if len(semestres) == 1:
         mostrar_semestre(inscritos, semestres[0], "===HISTORIAL DEL ESTUDIANTE===")
         return
@@ -312,6 +506,13 @@ def mostrar_historial_estudiante(inscritos, estudiante, semestres):
 
 
 def mostrar_grupos(inscritos, grupos):
+    """Muestra el listado tabular de grupos con sus integrantes.
+
+    Args:
+        inscritos (ListaSimple): Lista simple usada para resolver integrantes.
+        grupos (ListaCircular): Lista circular con los grupos registrados.
+    """
+
     datos = grupos.recorrer()
     if len(datos) == 0:
         print("No hay grupos registrados. ⛔")
@@ -339,6 +540,15 @@ def mostrar_grupos(inscritos, grupos):
 
 
 def pedir_semestre(estudiante_id):
+    """Solicita por consola los datos necesarios para crear un semestre.
+
+    Args:
+        estudiante_id (str): Identificador del estudiante asociado al semestre.
+
+    Returns:
+        Semestre: Objeto construido con los datos ingresados por el usuario.
+    """
+
     anio = pedir_entero("Ingrese el año: ", 2000, 2100)
     term = pedir_entero("Ingrese el término: ", 1, 2)
     cantidad = pedir_entero("¿Cuántas materias desea agregar?: ", 1)
@@ -357,6 +567,15 @@ def pedir_semestre(estudiante_id):
 
 
 def promedio_semestre(semestre):
+    """Calcula el promedio de notas de un semestre.
+
+    Args:
+        semestre (Semestre): Semestre cuyo promedio se desea calcular.
+
+    Returns:
+        float: Promedio de notas o 0 si no hay materias registradas.
+    """
+
     materias = semestre.materias
     if len(materias) == 0:
         return 0
@@ -368,6 +587,13 @@ def promedio_semestre(semestre):
 
 
 def reporte_top_3(historial, inscritos):
+    """Genera el reporte de los tres mejores promedios semestrales.
+
+    Args:
+        historial (ListaDoble): Lista doble con el historial académico.
+        inscritos (ListaSimple): Lista simple usada para resolver estudiantes.
+    """
+
     semestres = historial.recorrer_adelante()
     if len(semestres) == 0:
         print("No hay historial para calcular promedios. ⛔")
@@ -427,6 +653,13 @@ def reporte_top_3(historial, inscritos):
 
 
 def reporte_siguiente_grupo(grupos, inscritos):
+    """Muestra el siguiente grupo después de rotar la lista circular.
+
+    Args:
+        grupos (ListaCircular): Lista circular de grupos.
+        inscritos (ListaSimple): Lista simple usada para resolver integrantes.
+    """
+
     grupo = grupos.rotar(1)
     if grupo is None:
         print("No hay grupos registrados. ⛔")
@@ -435,10 +668,22 @@ def reporte_siguiente_grupo(grupos, inscritos):
 
 
 def reporte_cantidad_inscritos(inscritos):
+    """Imprime la cantidad total de estudiantes inscritos.
+
+    Args:
+        inscritos (ListaSimple): Lista simple de inscritos.
+    """
+
     print("Cantidad de inscritos:", inscritos.contar())
 
 
 def crear_estudiante():
+    """Solicita los datos del estudiante y crea la entidad correspondiente.
+
+    Returns:
+        Estudiante: Estudiante construido con los datos validados.
+    """
+
     nombres = validar_input("Ingrese los nombres del estudiante: ")
     correo = validar_correo("Ingrese el correo del estudiante: ")
     ci_estudiante = validar_ci("Ingrese la cédula del estudiante: ")
@@ -446,6 +691,16 @@ def crear_estudiante():
 
 
 def pedir_estudiante_inscrito_por_id(inscritos, accion):
+    """Solicita un ID de estudiante y valida que exista.
+
+    Args:
+        inscritos (ListaSimple): Lista simple donde se busca al estudiante.
+        accion (str): Descripción breve de la acción que se va a realizar.
+
+    Returns:
+        Estudiante | None: Estudiante encontrado o None si no existe.
+    """
+
     if inscritos.contar() == 0:
         print("No hay estudiantes inscritos registrados. ⛔")
         return None
@@ -459,6 +714,15 @@ def pedir_estudiante_inscrito_por_id(inscritos, accion):
 
 
 def pedir_integrantes_grupo(inscritos):
+    """Solicita los integrantes de un grupo verificando que estén inscritos.
+
+    Args:
+        inscritos (ListaSimple): Lista simple donde se validan los estudiantes.
+
+    Returns:
+        list[str] | None: Lista de IDs válidos o None si no hay inscritos.
+    """
+
     if inscritos.contar() == 0:
         print("Debe existir al menos un estudiante inscrito para crear un grupo. ⛔")
         return None
@@ -482,6 +746,17 @@ def pedir_integrantes_grupo(inscritos):
 
 
 def pedir_anio_y_termino_existente(historial, estudiante_id, accion):
+    """Solicita un año y un término existentes para un estudiante.
+
+    Args:
+        historial (ListaDoble): Lista doble con el historial académico.
+        estudiante_id (str): Identificador del estudiante dueño del historial.
+        accion (str): Descripción breve de la operación actual.
+
+    Returns:
+        tuple[int, int] | None: Par año-término válido o None si falla la validación.
+    """
+
     anio = pedir_entero(f"Año a {accion}: ", 2000, 2100)
 
     if not historial.existe_anio_de_estudiante(estudiante_id, anio):
@@ -505,6 +780,12 @@ def pedir_anio_y_termino_existente(historial, estudiante_id, accion):
 
 
 def menu_inscritos(inscritos):
+    """Gestiona las operaciones disponibles para el módulo de inscritos.
+
+    Args:
+        inscritos (ListaSimple): Lista simple de estudiantes inscritos.
+    """
+
     while True:
         mostrar_titulo("=== 👥 Módulo Inscritos 👥 ===")
         print("1. Agregar estudiante ➕")
@@ -554,6 +835,13 @@ def menu_inscritos(inscritos):
 
 
 def menu_historial(historial, inscritos):
+    """Gestiona las operaciones del historial académico por estudiante.
+
+    Args:
+        historial (ListaDoble): Lista doble con los semestres registrados.
+        inscritos (ListaSimple): Lista simple usada para validar estudiantes.
+    """
+
     while True:
         mostrar_titulo("=== 📚 Módulo Historial Académico 📚 ===")
         print("1. Agregar semestre ➕")
@@ -631,6 +919,13 @@ def menu_historial(historial, inscritos):
 
 
 def menu_grupos(grupos, inscritos):
+    """Gestiona las operaciones del módulo de grupos rotativos.
+
+    Args:
+        grupos (ListaCircular): Lista circular con los grupos registrados.
+        inscritos (ListaSimple): Lista simple usada para validar integrantes.
+    """
+
     while True:
         mostrar_titulo("=== 🔄 Módulo Grupos Rotativos 🔄 ===")
         print("1. Agregar grupo ➕")
@@ -693,6 +988,14 @@ def menu_grupos(grupos, inscritos):
 
 
 def menu_reportes(inscritos, historial, grupos):
+    """Gestiona los reportes consolidados del sistema académico.
+
+    Args:
+        inscritos (ListaSimple): Lista simple de estudiantes inscritos.
+        historial (ListaDoble): Lista doble con el historial académico.
+        grupos (ListaCircular): Lista circular con los grupos registrados.
+    """
+
     while True:
         mostrar_titulo("=== 📊 Módulo Reportes 📊 ===")
         print("1. Top 3 mejores promedios 🏆")
@@ -713,6 +1016,8 @@ def menu_reportes(inscritos, historial, grupos):
 
 
 def main():
+    """Inicializa las estructuras, carga datos y ejecuta el menú principal."""
+
     inscritos = ListaSimple()
     historial = ListaDoble()
     grupos = ListaCircular()

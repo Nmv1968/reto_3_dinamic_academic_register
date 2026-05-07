@@ -1,3 +1,9 @@
+"""Pruebas manuales de regresión para el reto 3.
+
+Este módulo ejecuta verificaciones básicas sobre las estructuras de inscritos,
+historial académico y grupos, además de comprobar la persistencia de datos.
+"""
+
 import os
 
 from grupos import Grupo, ListaCircular, importar_grupos_json
@@ -10,11 +16,19 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 
 
 def borrar_si_existe(ruta):
+    """Elimina un archivo si existe en disco.
+
+    Args:
+        ruta (str): Ruta del archivo que se desea eliminar.
+    """
+
     if os.path.exists(ruta):
         os.remove(ruta)
 
 
 def probar_lista_simple():
+    """Ejecuta pruebas básicas sobre la lista simple de inscritos."""
+
     print("Prueba de lista simple")
     lista = ListaSimple()
     ana = Estudiante("Ana", "ana@correo.com", "1000000001")
@@ -58,6 +72,8 @@ def probar_lista_simple():
 
 
 def probar_lista_doble():
+    """Ejecuta pruebas básicas sobre la lista doble del historial."""
+
     print("Prueba de lista doble")
     lista = ListaDoble()
     ana = Estudiante("Ana", "ana@correo.com", "1000000004")
@@ -105,6 +121,8 @@ def probar_lista_doble():
 
 
 def probar_lista_circular():
+    """Ejecuta pruebas básicas sobre la lista circular de grupos."""
+
     print("Prueba de lista circular")
     lista = ListaCircular()
     ana = Estudiante("Ana", "ana@correo.com", "1000000006")
@@ -151,6 +169,8 @@ def probar_lista_circular():
 
 
 def ejecutar_pruebas():
+    """Ejecuta todas las pruebas de regresión del proyecto."""
+
     probar_lista_simple()
     probar_lista_doble()
     probar_lista_circular()

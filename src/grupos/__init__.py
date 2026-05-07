@@ -1,3 +1,9 @@
+"""Paquete de grupos de exposición.
+
+Expone los modelos y utilidades necesarias para gestionar grupos, la lista
+circular que los almacena y la persistencia en archivos JSON.
+"""
+
 from .grupo import Grupo
 from .lista_circular import ListaCircular
 from .nodo_circular import NodoCircular
