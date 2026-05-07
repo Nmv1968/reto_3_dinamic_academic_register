@@ -200,6 +200,16 @@ def obtener_nombre_estudiante(inscritos, estudiante_id):
     return estudiante.nombres
 
 
+def obtener_resumen_estudiante(inscritos, estudiante_id):
+    if estudiante_id == "":
+        return "Sin asignar"
+
+    estudiante = obtener_estudiante_por_id(inscritos, estudiante_id)
+    if estudiante is None:
+        return "No inscrito"
+    return f"CI: {estudiante.ci_estudiante} - Nombres: {estudiante.nombres}"
+
+
 def describir_materias(semestre):
     if len(semestre.materias) == 0:
         return "Sin materias registradas"
@@ -216,19 +226,14 @@ def describir_integrantes(grupo, inscritos):
 
     descripciones = []
     for integrante_id in grupo.integrantes_ids:
-        nombre = obtener_nombre_estudiante(inscritos, integrante_id)
-        if integrante_id == "":
-            descripciones.append(f"{nombre}")
-        else:
-            descripciones.append(f"{nombre} | ID: {integrante_id}")
+        descripciones.append(obtener_resumen_estudiante(inscritos, integrante_id))
     return descripciones
 
 
 def mostrar_semestre(inscritos, semestre, encabezado="===SEMESTRE ENCONTRADO==="):
-    nombre_estudiante = obtener_nombre_estudiante(inscritos, semestre.estudiante_id)
+    resumen_estudiante = obtener_resumen_estudiante(inscritos, semestre.estudiante_id)
     print(encabezado)
-    print("ID del estudiante:", semestre.estudiante_id or "Sin asignar")
-    print("Estudiante:", nombre_estudiante)
+    print("Estudiante:", resumen_estudiante)
     print("Año:", semestre.anio)
     print("Término:", semestre.term)
     print("Materias registradas:", len(semestre.materias))
@@ -269,20 +274,14 @@ def mostrar_historial(inscritos, historial, hacia_atras=False):
     filas = [
         (
             str(indice + 1),
-            obtener_nombre_estudiante(inscritos, semestre.estudiante_id),
+            obtener_resumen_estudiante(inscritos, semestre.estudiante_id),
             str(semestre.anio),
             str(semestre.term),
             str(len(semestre.materias)),
         )
         for indice, semestre in enumerate(datos)
     ]
-    detalles = [
-        (
-            f"ID estudiante: {semestre.estudiante_id or 'Sin asignar'}"
-            f" | Materias: {describir_materias(semestre)}"
-        )
-        for semestre in datos
-    ]
+    detalles = [f"Materias: {describir_materias(semestre)}" for semestre in datos]
 
     mostrar_tabla(titulo, encabezados, filas, detalles, f"Total de semestres: {len(datos)}")
 
@@ -304,7 +303,7 @@ def mostrar_historial_estudiante(inscritos, estudiante, semestres):
     ]
     detalles = [f"Detalle: {describir_materias(semestre)}" for semestre in semestres]
     mostrar_tabla(
-        f"Historial de {estudiante.nombres}",
+        f"Historial de {estudiante.ci_estudiante} | {estudiante.nombres}",
         encabezados,
         filas,
         detalles,
