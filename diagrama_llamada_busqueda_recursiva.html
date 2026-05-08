@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Llamadas Recursivas - Búsqueda de Grupo</title>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+          primaryColor: '#e1f5fe',
+          primaryTextColor: '#0277bd',
+          primaryBorderColor: '#0288d1',
+          lineColor: '#546e7a',
+          secondaryColor: '#f1f8e9',
+          tertiaryColor: '#fffde7'
+        }
+      });
+    </script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap");
+
+      :root {
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Outfit", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1100px;
+        width: 100%;
+        background: var(--card-bg);
+        padding: 40px;
+        border-radius: 24px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0 0 10px 0;
+        background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      p.subtitle {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        margin: 0;
+      }
+
+      .diagram-grid {
+        display: grid;
+        gap: 24px;
+      }
+
+      .diagram-card {
+        background: #fdfdfd;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 20px;
+        padding: 28px;
+      }
+
+      .diagram-card h2 {
+        margin: 0 0 8px 0;
+        font-size: 1.45rem;
+      }
+
+      .diagram-card p {
+        margin: 0 0 18px 0;
+        color: var(--text-muted);
+      }
+
+      .mermaid-wrapper {
+        background: #ffffff;
+        padding: 24px;
+        border-radius: 16px;
+        border: 1px dashed #e2e8f0;
+        overflow-x: auto;
+      }
+
+      .callout {
+        margin-top: 24px;
+        padding: 20px;
+        background: #f1f5f9;
+        border-radius: 16px;
+      }
+
+      .callout h3 {
+        margin: 0 0 10px 0;
+        font-size: 1.05rem;
+      }
+
+      .callout ul {
+        margin: 0;
+        padding-left: 20px;
+        color: var(--text-muted);
+      }
+
+      footer {
+        margin-top: 30px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        text-align: center;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 24px;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        .diagram-card {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Búsqueda Recursiva por Llamadas</h1>
+        <p class="subtitle">Explicación visual de cómo buscar_recursivo avanza nodo por nodo en la lista circular</p>
+      </header>
+
+      <div class="diagram-grid">
+        <section class="diagram-card">
+          <h2>Diagrama de llamada recursiva</h2>
+          <p>Ejemplo de una búsqueda exitosa cuando se busca el grupo “B” y la lista circular parte desde el nodo actual “A”.</p>
+          <div class="mermaid-wrapper">
+            <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Menu as menu_grupos
+    participant Call1 as buscar_recursivo("B", None, None)
+    participant NodoA as Nodo A
+    participant Call2 as buscar_recursivo("B", A.siguiente, A)
+    participant NodoB as Nodo B
+
+    Menu->>Call1: iniciar búsqueda
+    Note right of Call1: nodo = actual<br/>inicio = actual
+    Call1->>NodoA: comparar nombre_grupo
+    NodoA-->>Call1: no coincide
+    Call1->>Call2: llamada recursiva con nodo.siguiente
+    Call2->>NodoB: comparar nombre_grupo
+    NodoB-->>Call2: coincide
+    Call2-->>Call1: retorna Grupo B
+    Call1-->>Menu: retorna Grupo B
+            </pre>
+          </div>
+        </section>
+
+        <section class="diagram-card">
+          <h2>Casos base y avance</h2>
+          <p>Resumen del orden exacto de decisiones que usa la función para detenerse o continuar.</p>
+          <div class="mermaid-wrapper">
+            <pre class="mermaid">
+flowchart TD
+  A((buscar recursivo)) --> B{¿La lista está vacía?}
+    B -- Sí --> C[Retorna None]
+  B -- No --> D{¿Es la primera llamada?}
+  D -- Sí --> E[Usar actual como nodo e inicio]
+  D -- No --> F{¿El nombre del nodo coincide?}
+    E --> F
+    F -- Sí --> G[Retorna nodo.valor]
+  F -- No --> H{¿El siguiente nodo es el inicio?}
+    H -- Sí --> I[Retorna None]
+  H -- No --> J[Llama otra vez con el siguiente nodo]
+    J --> A
+
+    classDef base font-family:Outfit,font-size:14px;
+    classDef process fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#0277bd;
+    classDef decision fill:#ede9fe,stroke:#7c3aed,stroke-width:2px,color:#5b21b6;
+    classDef final fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20;
+
+    class A,E,J process;
+    class B,D,F,H decision;
+    class C,G,I final;
+            </pre>
+          </div>
+          <div class="callout">
+            <h3>Cómo explicarlo en exposición</h3>
+            <ul>
+              <li>La primera llamada prepara el punto de inicio de la vuelta circular.</li>
+              <li>Cada llamada compara un solo nodo y delega el resto al siguiente.</li>
+              <li>Si vuelve al nodo inicial sin encontrar coincidencia, la búsqueda termina.</li>
+              <li>El resultado exitoso se propaga de regreso por toda la cadena de llamadas.</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <footer>
+        Generado para apoyar la explicación de recursividad en la lista circular del reto 3
+      </footer>
+    </div>
+  </body>
+</html>
