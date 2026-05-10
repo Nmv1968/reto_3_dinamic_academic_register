@@ -1,112 +1,119 @@
 # Reto 3 - Registros dinamicos academicos
 
-Este proyecto implementa tres estructuras de datos enlazadas en Python para una actividad de Programacion II:
+Este proyecto implementa un sistema academico en consola usando estructuras enlazadas desarrolladas manualmente en Python. El sistema administra tres dominios relacionados entre si:
 
-- Lista simple para inscritos
-- Lista doble para historial academico
-- Lista circular para grupos rotativos
+- Inscritos mediante una lista simple
+- Historial academico mediante una lista doble
+- Grupos mediante una lista circular
 
-Tambien incluye persistencia en CSV y JSON, un menu en consola, reportes y casos de prueba basicos.
+Ademas incluye validaciones, persistencia en CSV y JSON, y reportes para consultar la informacion administrada por cada estructura.
 
-Como referencia visual y de validaciones, se tomo la idea del reto 2 de colas, pero manteniendo las estructuras pedidas para este reto.
+## Objetivo
 
-## Estructura
+Aplicar estructuras enlazadas en un caso mas cercano a un sistema real, donde varias estructuras deben coexistir y compartir informacion sin perder consistencia.
+
+## Estructura actual
 
 ```text
 /reto_3_registros_dinamicos_academicos_mesias_naim
-	/src
-		app.py
-		casos_prueba.py
-		estudiante.py
-		lista_circular.py
-		lista_doble.py
-		lista_simple.py
-		nodo_circular.py
-		nodo_doble.py
-		nodo_simple.py
-		persistencia_csv.py
-		persistencia_json.py
 	/data
 		grupos.json
 		historial.json
 		inscritos.csv
+	/src
+		app.py
+		/grupos
+			__init__.py
+			grupo.py
+			lista_circular.py
+			nodo_circular.py
+			persistencia_json.py
+		/historial
+			__init__.py
+			lista_doble.py
+			materia.py
+			nodo_doble.py
+			persistencia_json.py
+			semestre.py
+		/inscritos
+			__init__.py
+			estudiante.py
+			lista_simple.py
+			nodo_simple.py
+			persistencia_csv.py
 	README.md
 ```
 
+## Componentes principales
+
+### Inscritos
+
+- Usa una lista simple para registrar estudiantes
+- Cada estudiante se representa con la clase `Estudiante`
+- El sistema genera automaticamente `id_estudiante` con UUID
+- La cedula se maneja como `ci_estudiante` y debe tener exactamente 10 digitos
+- Permite insertar, buscar por ID o cedula, eliminar, recorrer, exportar e importar
+
+### Historial academico
+
+- Usa una lista doble para almacenar semestres ordenados
+- Cada semestre se modela con la clase `Semestre`
+- Cada materia se modela con la clase `Materia`
+- Cada semestre guarda `estudiante_id` para relacionarse con inscritos
+- Permite insertar ordenadamente, buscar, eliminar, recorrer en ambos sentidos y persistir en JSON
+
+### Grupos
+
+- Usa una lista circular para administrar grupos
+- Cada grupo se modela con la clase `Grupo`
+- Cada grupo guarda `integrantes_ids` con referencias a estudiantes inscritos
+- Incluye insercion, eliminacion, recorrido, rotacion y busqueda recursiva
+- La persistencia de grupos se realiza en JSON
+
+## Relacion entre estructuras
+
+El sistema no maneja las tres listas como bloques aislados. La integracion se realiza mediante `id_estudiante`:
+
+- Un estudiante debe existir en inscritos antes de aparecer en historial
+- Un estudiante debe existir en inscritos antes de ser agregado a un grupo
+- El historial academico se consulta por estudiante
+- Los grupos almacenan referencias a estudiantes ya registrados
+
+Esto permite mantener consistencia entre estructuras y evita referencias invalidas.
+
+## Funcionalidades destacadas
+
+- Menus en consola con operaciones separadas por modulo
+- Validacion de cedula, correo y entradas numericas
+- Visualizacion de datos en formato legible para consola
+- Persistencia manual en CSV y JSON
+- Reportes de inscritos, historial y grupos
+
+## Complejidad principal
+
+- Insercion al final en lista simple: O(n)
+- Busqueda y eliminacion en lista simple: O(n)
+- Insercion ordenada en lista doble: O(n)
+- Busqueda, eliminacion y recorridos en lista doble: O(n)
+- Insercion, busqueda recursiva y eliminacion en lista circular: O(n)
+- Rotacion en lista circular: O(k)
+
 ## Como ejecutar
 
-Desde la carpeta raiz del proyecto:
+Desde la raiz del proyecto:
 
 ```bash
 .venv/bin/python src/app.py
 ```
 
-Para correr los casos de prueba:
-
-```bash
-.venv/bin/python src/casos_prueba.py
-```
-
-## Funcionalidades
-
-### Lista simple
-
-- Insertar al final
-- Buscar por id
-- Eliminar por id
-- Recorrer la lista
-- Exportar e importar en CSV
-- Cada inscrito se maneja con un objeto `Estudiante`
-- El ID del inscrito se genera automaticamente con UUID, parecido al reto 2
-
-### Lista doble
-
-- Insertar ordenado por `(anio, term)`
-- Buscar un semestre
-- Eliminar un semestre
-- Recorrer hacia adelante
-- Recorrer hacia atras
-- Exportar e importar en JSON
-
-### Lista circular
-
-- Insertar grupos
-- Buscar con recursividad
-- Eliminar un grupo
-- Rotar `k` posiciones
-- Recorrer la lista
-- Exportar e importar en JSON
-
-### Reportes
-
-- Top 3 mejores promedios por semestre
-- Siguiente grupo en turno
-- Cantidad de inscritos
-
-## Complejidad
-
-- Insercion en lista simple: O(n)
-- Busqueda en lista simple: O(n)
-- Eliminacion en lista simple: O(n)
-- Recorrido en lista simple: O(n)
-- Insercion ordenada en lista doble: O(n)
-- Busqueda en lista doble: O(n)
-- Eliminacion en lista doble: O(n)
-- Recorrido adelante y atras: O(n)
-- Insercion en lista circular: O(n)
-- Busqueda recursiva en lista circular: O(n)
-- Eliminacion en lista circular: O(n)
-- Recorrido en lista circular: O(n)
-- Rotacion en lista circular: O(k)
-
 ## Archivos de datos
 
-- `data/inscritos.csv` guarda los inscritos
-- `data/historial.json` guarda el historial academico
-- `data/grupos.json` guarda los grupos rotativos
+- `data/inscritos.csv` guarda los estudiantes inscritos
+- `data/historial.json` guarda los semestres y materias por estudiante
+- `data/grupos.json` guarda los grupos y sus integrantes
 
-## Nota
+## Observaciones
 
-El codigo se hizo con un estilo sencillo y directo, pensado para una actividad academica de estructuras de datos.
-
-La interfaz de consola usa encabezados visuales, mensajes de error simples y validaciones reutilizables para mantener una presentacion parecida a la del reto 2.
+- El proyecto fue organizado por paquetes para separar mejor cada dominio
+- La implementacion prioriza claridad academica sobre optimizaciones avanzadas
+- Una mejora futura natural seria agregar un puntero `cola` en la lista simple para llevar `insertar_final` de O(n) a O(1)
