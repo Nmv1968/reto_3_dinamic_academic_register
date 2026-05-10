@@ -1022,8 +1022,6 @@ def main():
     historial = ListaDoble()
     grupos = ListaCircular()
 
-    cargar_datos(inscritos, historial, grupos)
-
     while True:
         mostrar_titulo("=== 🏫 Sistema de Registros Académicos 🏫 ===")
         print("1. Inscritos 👥")

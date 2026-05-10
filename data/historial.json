@@ -1,0 +1,53 @@
+[
+  {
+    "anio": 2025,
+    "term": 2,
+    "materias": [
+      {
+        "cod": "003",
+        "nombre": "FUNDAMENTOS DE INVESTIGACION",
+        "nota": 7.9
+      }
+    ],
+    "estudiante_id": "ad9079ae-5674-4429-a933-a5a241c39254"
+  },
+  {
+    "anio": 2026,
+    "term": 1,
+    "materias": [
+      {
+        "cod": "004",
+        "nombre": "CALCULO II",
+        "nota": 9.7
+      },
+      {
+        "cod": "007",
+        "nombre": "EDO",
+        "nota": 7.0
+      },
+      {
+        "cod": "008",
+        "nombre": "ETHICAL HACKING",
+        "nota": 10.0
+      }
+    ],
+    "estudiante_id": "66194886-80ad-4373-ad5b-4eb0ab7c61ea"
+  },
+  {
+    "anio": 2026,
+    "term": 2,
+    "materias": [
+      {
+        "cod": "001",
+        "nombre": "PROGRAMACION I",
+        "nota": 10.0
+      },
+      {
+        "cod": "002",
+        "nombre": "CALCULO I",
+        "nota": 8.6
+      }
+    ],
+    "estudiante_id": "89d2d744-58f9-47ff-b585-75f4bbea2710"
+  }
+]
