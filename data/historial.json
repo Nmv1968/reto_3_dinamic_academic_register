@@ -49,5 +49,159 @@
       }
     ],
     "estudiante_id": "89d2d744-58f9-47ff-b585-75f4bbea2710"
+  },
+  {
+    "anio": 2026,
+    "term": 1,
+    "materias": [
+      {
+        "cod": "005",
+        "nombre": "PROGRAMACION II",
+        "nota": 8.5
+      },
+      {
+        "cod": "006",
+        "nombre": "FISICA",
+        "nota": 7.8
+      },
+      {
+        "cod": "009",
+        "nombre": "ALGEBRA LINEAL",
+        "nota": 9.2
+      }
+    ],
+    "estudiante_id": "550e8400-e29b-41d4-a716-446655440000"
+  },
+  {
+    "anio": 2026,
+    "term": 1,
+    "materias": [
+      {
+        "cod": "010",
+        "nombre": "QUIMICA",
+        "nota": 6.5
+      },
+      {
+        "cod": "011",
+        "nombre": "ESTADISTICA",
+        "nota": 8.9
+      },
+      {
+        "cod": "012",
+        "nombre": "SISTEMAS OPERATIVOS",
+        "nota": 9.1
+      }
+    ],
+    "estudiante_id": "550e8400-e29b-41d4-a716-446655440001"
+  },
+  {
+    "anio": 2026,
+    "term": 1,
+    "materias": [
+      {
+        "cod": "013",
+        "nombre": "REDES",
+        "nota": 7.2
+      },
+      {
+        "cod": "014",
+        "nombre": "BASES DE DATOS",
+        "nota": 8.7
+      },
+      {
+        "cod": "015",
+        "nombre": "INTELIGENCIA ARTIFICIAL",
+        "nota": 9.5
+      }
+    ],
+    "estudiante_id": "550e8400-e29b-41d4-a716-446655440002"
+  },
+  {
+    "anio": 2026,
+    "term": 1,
+    "materias": [
+      {
+        "cod": "016",
+        "nombre": "DESARROLLO WEB",
+        "nota": 8.0
+      },
+      {
+        "cod": "017",
+        "nombre": "SEGURIDAD INFORMATICA",
+        "nota": 9.3
+      },
+      {
+        "cod": "018",
+        "nombre": "MATEMATICAS DISCRETAS",
+        "nota": 7.6
+      }
+    ],
+    "estudiante_id": "550e8400-e29b-41d4-a716-446655440003"
+  },
+  {
+    "anio": 2026,
+    "term": 1,
+    "materias": [
+      {
+        "cod": "019",
+        "nombre": "ALGORITMOS",
+        "nota": 9.8
+      },
+      {
+        "cod": "020",
+        "nombre": "ESTRUCTURAS DE DATOS",
+        "nota": 8.4
+      },
+      {
+        "cod": "021",
+        "nombre": "PROGRAMACION FUNCIONAL",
+        "nota": 7.9
+      }
+    ],
+    "estudiante_id": "550e8400-e29b-41d4-a716-446655440004"
+  },
+  {
+    "anio": 2026,
+    "term": 1,
+    "materias": [
+      {
+        "cod": "022",
+        "nombre": "MACHINE LEARNING",
+        "nota": 9.0
+      },
+      {
+        "cod": "023",
+        "nombre": "CLOUD COMPUTING",
+        "nota": 8.2
+      },
+      {
+        "cod": "024",
+        "nombre": "DEVOPS",
+        "nota": 7.4
+      }
+    ],
+    "estudiante_id": "550e8400-e29b-41d4-a716-446655440005"
+  },
+  {
+    "anio": 2026,
+    "term": 1,
+    "materias": [
+      {
+        "cod": "025",
+        "nombre": "CIENCIA DE DATOS",
+        "nota": 8.8
+      },
+      {
+        "cod": "026",
+        "nombre": "BIG DATA",
+        "nota": 9.6
+      },
+      {
+        "cod": "027",
+        "nombre": "BLOCKCHAIN",
+        "nota": 7.1
+      }
+    ],
+    "estudiante_id": "550e8400-e29b-41d4-a716-446655440006"
   }
 ]

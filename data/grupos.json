@@ -1,20 +1,30 @@
 [
   {
-    "nombre_grupo": "Grupo 3",
-    "tutor": "ERIKA PUETATE",
-    "tema": "ESTRUCTURA DE DATOS",
+    "nombre_grupo": "Grupo 1",
+    "tutor": "PROFESOR UNO",
+    "tema": "ALGORITMOS",
     "integrantes_ids": [
-      "e915e450-7b00-4c46-810e-957c32897ed8",
-      "66194886-80ad-4373-ad5b-4eb0ab7c61ea"
+      "550e8400-e29b-41d4-a716-446655440000",
+      "550e8400-e29b-41d4-a716-446655440001",
+      "550e8400-e29b-41d4-a716-446655440002"
     ]
   },
   {
     "nombre_grupo": "Grupo 2",
-    "tutor": "ANDY ZURITA",
-    "tema": "SQL",
+    "tutor": "PROFESORA DOS",
+    "tema": "BASES DE DATOS",
     "integrantes_ids": [
-      "d00e2e21-295a-494b-9fe7-b97e15a1c022",
-      "063c8128-484f-46c6-adaa-3f3d30183de5"
+      "550e8400-e29b-41d4-a716-446655440003",
+      "550e8400-e29b-41d4-a716-446655440004"
+    ]
+  },
+  {
+    "nombre_grupo": "Grupo 3",
+    "tutor": "PROFESOR TRES",
+    "tema": "PROGRAMACION WEB",
+    "integrantes_ids": [
+      "550e8400-e29b-41d4-a716-446655440005",
+      "550e8400-e29b-41d4-a716-446655440006"
     ]
   }
 ]
